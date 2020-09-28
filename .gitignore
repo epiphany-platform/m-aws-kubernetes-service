@@ -1,3 +1,9 @@
+# Intellij files
+.idea
+
+# SSH keys
+**/vms_rsa*
+
 # Local .terraform directories
 **/.terraform/*
 
