@@ -2,8 +2,8 @@ data "aws_vpc" "vpc" {
   id = var.vpc_id
 }
 
-module "eks" {
-  source        = "modules/awsks"
+module "awsks" {
+  source        = "./modules/awsks"
   name          = var.name
   k8s_version   = var.k8s_version
   vpc_id        = data.aws_vpc.vpc.id
