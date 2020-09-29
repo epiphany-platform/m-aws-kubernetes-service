@@ -31,7 +31,7 @@ init-awsbi: setup
 		-v $(M_SHARED_EXTERNAL):/shared \
 		-t $(AWSBI) \
 		init \
-		M_VMS_COUNT=2 \
+		M_VMS_COUNT=0 \
 		M_PUBLIC_IPS=false \
 		M_NAME=$(M_NAME)
 
@@ -82,10 +82,7 @@ init-awsks: setup
 		-v $(M_SHARED_EXTERNAL):/shared \
 		-t $(AWSKS) \
 		init \
-		M_VMS_COUNT=2 \
-		M_PUBLIC_IPS=false \
-		M_NAME=$(M_NAME) \
-		M_VMS_RSA=$(VMS_RSA_FILENAME)
+		M_NAME=$(M_NAME)
 
 plan-awsks: setup
 	@docker run --rm \

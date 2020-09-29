@@ -11,7 +11,9 @@ define M_CONFIG_CONTENT
 kind: $(M_MODULE_SHORT)-config
 $(M_MODULE_SHORT):
   name: $(M_NAME)
+  k8s_version: $(M_K8S_VERSION)
   vpc_id: $(M_VPC_ID)
+  region: $(M_REGION)
 endef
 
 define M_STATE_INITIAL

@@ -3,3 +3,7 @@ output "kubeconfig" {
   value       = module.awsks.kubeconfig
   sensitive   = true
 }
+
+output "vpc" {
+  value = var.vpc_id
+}

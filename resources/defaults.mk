@@ -1,5 +1,7 @@
 M_NAME ?= epiphany
 M_VPC_ID ?= unset
+M_K8S_VERSION ?= 1.17
+M_REGION ?= eu-central-1
 
 # aws credentials
 M_AWS_ACCESS_KEY ?= unset

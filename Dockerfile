@@ -1,9 +1,9 @@
-FROM hashicorp/terraform:0.13.2 as initializer
+FROM hashicorp/terraform:0.13.3 as initializer
 
 COPY resources /resources
 RUN cd /resources/terraform && terraform init
 
-FROM hashicorp/terraform:0.13.2
+FROM hashicorp/terraform:0.13.3
 
 ENV M_WORKDIR "/workdir"
 ENV M_RESOURCES "/resources"

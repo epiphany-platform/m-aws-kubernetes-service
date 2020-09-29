@@ -7,7 +7,7 @@ variable "name" {
 variable "k8s_version" {
   description = "Kubernetes version to install"
   type        = string
-  default     = "1.18"
+  default     = "1.17"
 }
 
 variable "vpc_id" {
@@ -33,4 +33,9 @@ variable "worker_groups" {
       asg_max_size         = 1
     }
   ]
+}
+
+variable "region" {
+  description = "Default region for AWS resources"
+  type        = string
 }
