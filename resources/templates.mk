@@ -14,6 +14,7 @@ $(M_MODULE_SHORT):
   k8s_version: $(M_K8S_VERSION)
   vpc_id: $(M_VPC_ID)
   region: $(M_REGION)
+  autoscaler_version: $(M_K8S_AUTOSCALER_VERSION)
 endef
 
 define M_STATE_INITIAL

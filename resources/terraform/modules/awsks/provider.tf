@@ -1,5 +1,8 @@
+provider "aws" {
+  region = var.region
+}
+
 provider "kubernetes" {
-  version                = ">= 1.11.1"
   load_config_file       = "false"
   host                   = data.aws_eks_cluster.cluster.endpoint
   token                  = data.aws_eks_cluster_auth.cluster.token

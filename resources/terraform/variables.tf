@@ -36,6 +36,34 @@ variable "worker_groups" {
 }
 
 variable "region" {
-  description = "Default region for AWS resources"
+  description = "Region for AWS resources"
   type        = string
+}
+
+# The cluster autoscaler major and minor versions must match your cluster.
+# For example if you are running a 1.16 EKS cluster set version to v1.16.5
+# See https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md#notes
+variable "autoscaler_version" {
+  description = "EKS autoscaler image tag"
+  type        = string
+  default     = "v1.17.3"
+}
+
+variable "autoscaler_name" {
+  description = "EKS Autoscaler name"
+  type        = string
+  default     = "eks-autoscaler"
+}
+
+variable "autoscaler_chart_version" {
+  description = "EKS chart version"
+  type        = string
+  default     = "7.3.4"
+}
+
+# https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-scale-down-work
+variable "autoscaler_scale_down_utilization_threshold" {
+  description = "Node utilization level, defined as sum of requested resources divided by capacity"
+  type        = string
+  default     = "0.65"
 }

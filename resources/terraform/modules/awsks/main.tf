@@ -29,7 +29,9 @@ module "eks" {
   subnets         = var.subnets
   vpc_id          = var.vpc_id
   worker_groups   = local.worker_groups
-  tags = {
+  # enable IAM Roles for Service Accounts
+  enable_irsa     = true
+  tags            = {
     cluster_name = var.name
   }
 }
