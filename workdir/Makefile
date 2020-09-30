@@ -123,6 +123,8 @@ template-config-file:
 	#AWSKS | template-config-file | will replace arguments with values from state file
 	@yq r $(M_SHARED)/$(M_STATE_FILE_NAME) 'awsbi.output[vpc_id.value]' \
 	| xargs -r yq w -i $(M_SHARED)/$(M_MODULE_SHORT)/$(M_CONFIG_NAME) '$(M_MODULE_SHORT).vpc_id'
+	@yq r $(M_SHARED)/$(M_STATE_FILE_NAME) 'awsbi.output[public_subnet_id.value]' \
+	| xargs -r yq w -i $(M_SHARED)/$(M_MODULE_SHORT)/$(M_CONFIG_NAME) '$(M_MODULE_SHORT).public_subnet_id'
 
 display-config-file:
 	#AWSKS | display-config-file | config file content is:
