@@ -11,6 +11,10 @@ terraform {
       version = ">= 1.11.1"
     }
 
+    helm = {
+      version = "~> 1.3.1"
+    }
+
     local = {
       version = "~> 1.2"
     }
@@ -20,7 +24,7 @@ terraform {
     }
 
     random = {
-      version = "~= 2.1"
+      version = "~> 2.1"
     }
 
     template = {

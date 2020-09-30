@@ -1,6 +1,4 @@
-data "aws_iam_role" "autoscaler" {
-  name = var.autoscaler_name
-}
+data "aws_caller_identity" "current" {}
 
 resource "helm_release" "cluster-autoscaler" {
   name  = "cluster-autoscaler"
@@ -48,6 +46,6 @@ resource "helm_release" "cluster-autoscaler" {
   set {
     name  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
     type = "string"
-    value = data.aws_iam_role.autoscaler.arn
+    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.autoscaler_name}"
   }
 }

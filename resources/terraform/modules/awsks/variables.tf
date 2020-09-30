@@ -3,11 +3,6 @@ variable "name" {
   type        = string
 }
 
-variable "cluster_name" {
-  description = "Prefix for resource names"
-  type        = string
-}
-
 variable "k8s_version" {
   description = "Kubernetes version to install"
   type        = string

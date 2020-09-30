@@ -56,7 +56,7 @@ variable "autoscaler_name" {
 }
 
 variable "autoscaler_chart_version" {
-  description = "EKS chart version"
+  description = "Autoscaler helm chart version"
   type        = string
   default     = "7.3.4"
 }
@@ -66,4 +66,10 @@ variable "autoscaler_scale_down_utilization_threshold" {
   description = "Node utilization level, defined as sum of requested resources divided by capacity"
   type        = string
   default     = "0.65"
+}
+
+# Necessary for egress internet access from private networks
+variable "public_subnet_id" {
+  description = "Subnet id to attach NAT gateway to"
+  type    = string
 }

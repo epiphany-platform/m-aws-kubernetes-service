@@ -15,6 +15,7 @@ $(M_MODULE_SHORT):
   vpc_id: $(M_VPC_ID)
   region: $(M_REGION)
   autoscaler_version: $(M_K8S_AUTOSCALER_VERSION)
+  public_subnet_id: $(M_PUBLIC_SUBNET_ID)
 endef
 
 define M_STATE_INITIAL
