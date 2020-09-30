@@ -1,12 +1,12 @@
 data "aws_caller_identity" "current" {}
 
 resource "helm_release" "cluster-autoscaler" {
-  name  = "cluster-autoscaler"
-  chart = "stable/cluster-autoscaler"
-  version = var.autoscaler_chart_version
+  name            = "cluster-autoscaler"
+  chart           = "stable/cluster-autoscaler"
+  version         = var.autoscaler_chart_version
   cleanup_on_fail = "true"
-  namespace = "kube-system"
-  timeout = 300
+  namespace       = "kube-system"
+  timeout         = 300
 
   set {
     name  = "cloudProvider"
@@ -45,7 +45,7 @@ resource "helm_release" "cluster-autoscaler" {
   }
   set {
     name  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
-    type = "string"
+    type  = "string"
     value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.autoscaler_name}"
   }
 }

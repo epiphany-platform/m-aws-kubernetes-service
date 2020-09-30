@@ -71,5 +71,5 @@ variable "autoscaler_scale_down_utilization_threshold" {
 # Necessary for egress internet access from private networks
 variable "public_subnet_id" {
   description = "Subnet id to attach NAT gateway to"
-  type    = string
+  type        = string
 }

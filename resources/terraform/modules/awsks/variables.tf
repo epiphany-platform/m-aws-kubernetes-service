@@ -48,11 +48,11 @@ variable "autoscaler_name" {
 
 variable "autoscaler_chart_version" {
   description = "EKS chart version"
-  type = string
+  type        = string
 }
 
 # https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-scale-down-work
 variable "autoscaler_scale_down_utilization_threshold" {
   description = "Node utilization level, defined as sum of requested resources divided by capacity"
-  type = string
+  type        = string
 }

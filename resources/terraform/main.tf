@@ -52,32 +52,32 @@ resource "aws_eip" "nat_gateway" {
 
 resource "aws_nat_gateway" "nat_gateway" {
   allocation_id = aws_eip.nat_gateway.id
-  subnet_id = var.public_subnet_id
-  tags       = {
-    Name = "${var.name}-nat-gateway"
+  subnet_id     = var.public_subnet_id
+  tags          = {
+    Name         = "${var.name}-nat-gateway"
     cluster_name = var.name
   }
 }
 
 resource "aws_route_table" "private" {
   vpc_id = data.aws_vpc.vpc.id
-  tags       = {
-    Name = "${var.name}-private-nw-route-table"
+  tags   = {
+    Name         = "${var.name}-private-nw-route-table"
     cluster_name = var.name
   }
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.nat_gateway.id
   }
 }
 
 resource "aws_route_table_association" "private1" {
-  subnet_id = aws_subnet.eks-subnet1.id
+  subnet_id      = aws_subnet.eks-subnet1.id
   route_table_id = aws_route_table.private.id
 }
 
 resource "aws_route_table_association" "private2" {
-  subnet_id = aws_subnet.eks-subnet2.id
+  subnet_id      = aws_subnet.eks-subnet2.id
   route_table_id = aws_route_table.private.id
 }
 
