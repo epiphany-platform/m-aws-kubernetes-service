@@ -4,15 +4,15 @@ terraform {
   # https://github.com/terraform-aws-modules/terraform-aws-eks#requirements
   required_providers {
     aws = {
-      version = ">= 2.28.1"
+      version = "~> 3.0"
     }
 
     kubernetes = {
-      version = ">= 1.11.1"
+      version = ">= 1.13.2"
     }
 
     helm = {
-      version = "~> 1.3.1"
+      version = ">= 1.3.1"
     }
 
     local = {
