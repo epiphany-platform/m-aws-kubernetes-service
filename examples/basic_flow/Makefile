@@ -2,7 +2,7 @@ AWSBI := epiphanyplatform/awsbi:0.0.1
 AWSKS := epiphanyplatform/awsks:0.0.1
 
 #makes it easier to replace the value
-M_NAME            ?= mop-module-tests
+M_NAME            ?= awsks-module-tests
 M_SHARED_EXTERNAL ?= /tmp/$(M_NAME)/shared
 
 VMS_RSA_FILENAME ?= vms_rsa
