@@ -92,13 +92,13 @@ resource "aws_ec2_tag" "eks-vpc" {
 module "awsks" {
   source                                      = "./modules/awsks"
   name                                        = var.name
-  k8s_version                                 = var.k8s_version
+  k8s_version                                 = "1.17"
   vpc_id                                      = data.aws_vpc.vpc.id
   subnets                                     = [aws_subnet.eks-subnet1.id,aws_subnet.eks-subnet2.id]
   worker_groups                               = var.worker_groups
   region                                      = var.region
   autoscaler_name                             = var.autoscaler_name
-  autoscaler_version                          = var.autoscaler_version
-  autoscaler_chart_version                    = var.autoscaler_chart_version
+  autoscaler_version                          = "v1.17.3"
+  autoscaler_chart_version                    = "7.3.4"
   autoscaler_scale_down_utilization_threshold = var.autoscaler_scale_down_utilization_threshold
 }
