@@ -1,9 +1,11 @@
+ROOT_DIR := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+
 AWSBI := epiphanyplatform/awsbi:0.0.1
 AWSKS := epiphanyplatform/awsks:0.0.1
 
 #makes it easier to replace the value
-M_NAME            ?= awsks-module-tests
-M_SHARED_EXTERNAL ?= /tmp/$(M_NAME)/shared
+M_NAME            ?= awsks-basic-flow
+M_SHARED_EXTERNAL ?= $(ROOT_DIR)/shared
 
 VMS_RSA_FILENAME ?= vms_rsa
 
@@ -18,13 +20,13 @@ all: apply
 apply: init-awsbi plan-awsbi apply-awsbi \
        init-awsks plan-awsks apply-awsks
 
-destroy: destroy-plan-awsks destroy-awsks \
-         destroy-plan-awsbi destroy-awsbi
+destroy: plan-destroy-awsks destroy-awsks \
+         plan-destroy-awsbi destroy-awsbi
 
 clean:
 	@rm -rf $(M_SHARED_EXTERNAL)
 
-.PHONY: init-awsbi plan-awsbi apply-awsbi output-awsbi destroy-plan-awsbi destroy-awsbi
+.PHONY: init-awsbi plan-awsbi apply-awsbi output-awsbi plan-destroy-awsbi destroy-awsbi
 
 init-awsbi: setup
 	@docker run --rm \
@@ -59,7 +61,7 @@ output-awsbi: setup
 		M_AWS_ACCESS_KEY=$$AWS_ACCESS_KEY \
 		M_AWS_SECRET_KEY=$$AWS_SECRET_KEY
 
-destroy-plan-awsbi: setup
+plan-destroy-awsbi: setup
 	@docker run --rm \
 		-v $(M_SHARED_EXTERNAL):/shared \
 		-t $(AWSBI) \
@@ -75,7 +77,7 @@ destroy-awsbi: setup
 		M_AWS_ACCESS_KEY=$$AWS_ACCESS_KEY \
 		M_AWS_SECRET_KEY=$$AWS_SECRET_KEY
 
-.PHONY: init-awsks plan-awsks apply-awsks output-awsks destroy-plan-awsks destroy-awsks
+.PHONY: init-awsks plan-awsks apply-awsks output-awsks plan-destroy-awsks destroy-awsks
 
 init-awsks: setup
 	@docker run --rm \
@@ -109,7 +111,7 @@ output-awsks: setup
 		M_AWS_ACCESS_KEY=$$AWS_ACCESS_KEY \
 		M_AWS_SECRET_KEY=$$AWS_SECRET_KEY
 
-destroy-plan-awsks: setup
+plan-destroy-awsks: setup
 	@docker run --rm \
 		-v $(M_SHARED_EXTERNAL):/shared \
 		-t $(AWSKS) \
