@@ -1,3 +1,10 @@
+# VIM files
+*.swp
+*.swo
+
+# VSCode files
+/.vscode/
+
 # Intellij files
 .idea
 
