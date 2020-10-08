@@ -45,40 +45,21 @@ resource "aws_subnet" "eks-subnet2" {
   }
 }
 
-# https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html
-resource "aws_eip" "nat_gateway" {
-  vpc = true
-}
-
-resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.nat_gateway.id
-  subnet_id     = var.public_subnet_id
-  tags          = {
-    Name         = "${var.name}-nat-gateway"
+data "aws_route_table" "awsbi_route_table_private" {
+  tags = {
+    Name         = "rt-private-${var.name}"
     cluster_name = var.name
-  }
-}
-
-resource "aws_route_table" "private" {
-  vpc_id = data.aws_vpc.vpc.id
-  tags   = {
-    Name         = "${var.name}-private-nw-route-table"
-    cluster_name = var.name
-  }
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
   }
 }
 
 resource "aws_route_table_association" "private1" {
   subnet_id      = aws_subnet.eks-subnet1.id
-  route_table_id = aws_route_table.private.id
+  route_table_id = data.aws_route_table.awsbi_route_table_private.id
 }
 
 resource "aws_route_table_association" "private2" {
   subnet_id      = aws_subnet.eks-subnet2.id
-  route_table_id = aws_route_table.private.id
+  route_table_id = data.aws_route_table.awsbi_route_table_private.id
 }
 
 # https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html#vpc-tagging
