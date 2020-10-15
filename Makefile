@@ -2,6 +2,8 @@ VERSION ?= 0.0.1
 USER := epiphanyplatform
 IMAGE := awsks
 
+-include ./awscreds.mk
+
 #used for correctly setting shared folder permissions
 HOST_UID := $(shell id -u)
 HOST_GID := $(shell id -g)
