@@ -14,6 +14,7 @@ $(M_MODULE_SHORT):
   vpc_id: $(M_VPC_ID)
   region: $(M_REGION)
   public_subnet_id: $(M_PUBLIC_SUBNET_ID)
+  private_route_table_id: $(M_PRIVATE_ROUTE_TABLE_ID)
 endef
 
 define M_STATE_INITIAL

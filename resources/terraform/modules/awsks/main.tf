@@ -1,4 +1,9 @@
 locals {
+  autoscaler_name = "${var.name}-eks-autoscaler"
+
+  # https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-scale-down-work
+  autoscaler_scale_down_utilization_threshold = "0.65"
+
   worker_groups = [
     for wg in var.worker_groups:
     merge(

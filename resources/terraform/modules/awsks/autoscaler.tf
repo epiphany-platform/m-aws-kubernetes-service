@@ -41,11 +41,11 @@ resource "helm_release" "cluster-autoscaler" {
   set {
     name  = "extraArgs.scale-down-utilization-threshold"
     type  = "auto"
-    value = var.autoscaler_scale_down_utilization_threshold
+    value = local.autoscaler_scale_down_utilization_threshold
   }
   set {
     name  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
     type  = "string"
-    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.autoscaler_name}"
+    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.autoscaler_name}"
   }
 }

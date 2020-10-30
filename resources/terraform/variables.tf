@@ -34,21 +34,13 @@ variable "region" {
   type        = string
 }
 
-variable "autoscaler_name" {
-  description = "EKS Autoscaler name"
-  type        = string
-  default     = "eks-autoscaler"
-}
-
-# https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-scale-down-work
-variable "autoscaler_scale_down_utilization_threshold" {
-  description = "Node utilization level, defined as sum of requested resources divided by capacity"
-  type        = string
-  default     = "0.65"
-}
-
 # Necessary for egress internet access from private networks
 variable "public_subnet_id" {
   description = "Subnet id to attach NAT gateway to"
+  type        = string
+}
+
+variable "private_route_table_id" {
+  description = "Private route table id for table associations"
   type        = string
 }
