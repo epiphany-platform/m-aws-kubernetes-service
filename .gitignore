@@ -44,4 +44,5 @@ override.tf.json
 **/shared/
 **/.terraform/
 **/vars.tfvars.json
+awscreds.mk
 
