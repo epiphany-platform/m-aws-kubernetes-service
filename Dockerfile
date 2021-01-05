@@ -38,4 +38,4 @@ USER $ARG_HOST_UID:$ARG_HOST_GID
 # Set HOME to directory with necessary permissions for current user
 ENV HOME=$M_WORKDIR
 
-RUN helm repo add stable https://kubernetes-charts.storage.googleapis.com
+RUN helm repo add stable https://charts.helm.sh/stable
