@@ -66,6 +66,16 @@ awsks:
   region: eu-central-1
   subnet_ids: null
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -76,6 +86,16 @@ awsks:
   region: eu-central-1
   subnet_ids: null
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantStateContent: `
 kind: state
@@ -102,6 +122,16 @@ awsks:
   region: value3
   subnet_ids: value4
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -112,6 +142,16 @@ awsks:
   region: value3
   subnet_ids: value4
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantStateContent: `
 kind: state
@@ -153,6 +193,16 @@ awsks:
   region: eu-central-1
   subnet_ids: null
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -163,6 +213,16 @@ awsks:
   region: eu-central-1
   subnet_ids: null
   private_route_table_id: unset
+  disk_size: 32
+  autoscaler_scale_down_utilization_threshold: 0.65
+  ami_type: AL2_x86_64
+  ec2_ssh_key: null
+  worker_groups:
+    - name: default_wg
+      instance_type: t2.small
+      asg_desired_capacity: 1
+      asg_min_size: 1
+      asg_max_size: 1 
 `,
 			wantStateContent: `
 kind: state
@@ -187,10 +247,25 @@ awsks:
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sharedPath := setupOutput(t, "init")
-			defer cleanupOutput(sharedPath)
 
-			stateLocation := path.Join(sharedPath, tt.stateLocation)
+			k8sHostPath        := os.Getenv("K8S_HOST_PATH")
+			k8sVolPath         := os.Getenv("K8S_VOL_PATH")
+			sharedPath         := setupOutput(t, "init")
+			relativeSharedPath := sharedPath
+
+			if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
+				sharedPath         = path.Join(k8sHostPath, "awsks-init")
+				relativeSharedPath = path.Join(k8sVolPath, "awsks-init")
+
+				err := os.MkdirAll(relativeSharedPath, os.ModePerm)
+				if err != nil {
+					t.Fatalf("mkdir failed with: %v", err)
+				}
+			}
+
+			defer cleanupOutput(relativeSharedPath)
+
+			stateLocation := path.Join(relativeSharedPath, tt.stateLocation)
 			if err := ioutil.WriteFile(stateLocation, []byte(normStr(tt.stateContent)), 0644); err != nil {
 				t.Fatalf("wasnt able to save state file: %s", err)
 			}
@@ -209,7 +284,7 @@ awsks:
 				t.Error(diff)
 			}
 
-			configLocation := path.Join(sharedPath, tt.wantConfigLocation)
+			configLocation := path.Join(relativeSharedPath, tt.wantConfigLocation)
 			if _, err := os.Stat(configLocation); os.IsNotExist(err) {
 				t.Fatalf("missing expected file: %s", configLocation)
 			}
@@ -238,8 +313,23 @@ awsks:
 func TestPlan(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	awsbiImageTag, awsksImageTag := getImageTags(t)
-	sharedPath := setupOutput(t, "plan")
-	setupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
+
+	k8sHostPath        := os.Getenv("K8S_HOST_PATH")
+	k8sVolPath         := os.Getenv("K8S_VOL_PATH")
+	sharedPath         := setupOutput(t, "plan")
+	relativeSharedPath := sharedPath
+
+	if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
+		sharedPath         = path.Join(k8sHostPath, "awsks-plan")
+		relativeSharedPath = path.Join(k8sVolPath, "awsks-plan")
+
+		err := os.MkdirAll(relativeSharedPath, os.ModePerm)
+		if err != nil {
+			t.Fatalf("mkdir failed with: %v", err)
+		}
+	}
+
+	setupPlan(t, "plan", sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name                   string
@@ -289,15 +379,15 @@ func TestPlan(t *testing.T) {
 				t.Error(diff)
 			}
 
-			tfPlanLocation := path.Join(sharedPath, tt.wantTfPlanLocation)
+			tfPlanLocation := path.Join(relativeSharedPath, tt.wantTfPlanLocation)
 			if _, err := os.Stat(tfPlanLocation); os.IsNotExist(err) {
 				t.Fatalf("missing tfplan file: %s", tfPlanLocation)
 			}
 		})
 	}
 
-	cleanupPlan(t, "plan", sharedPath, awsAccessKey, awsSecretKey)
-	cleanupOutput(sharedPath)
+	cleanupPlan(t, "plan", relativeSharedPath, awsAccessKey, awsSecretKey)
+	cleanupOutput(relativeSharedPath)
 }
 
 func TestApply(t *testing.T) {
@@ -305,8 +395,23 @@ func TestApply(t *testing.T) {
 
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	awsbiImageTag, awsksImageTag := getImageTags(t)
-	sharedPath := setupOutput(t, "apply")
-	setupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
+
+	k8sHostPath        := os.Getenv("K8S_HOST_PATH")
+	k8sVolPath         := os.Getenv("K8S_VOL_PATH")
+	sharedPath         := setupOutput(t, "apply")
+	relativeSharedPath := sharedPath
+
+	if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
+		sharedPath         = path.Join(k8sHostPath, "awsks-apply")
+		relativeSharedPath = path.Join(k8sVolPath, "awsks-apply")
+
+		err := os.MkdirAll(relativeSharedPath, os.ModePerm)
+		if err != nil {
+			t.Fatalf("mkdir failed with: %v", err)
+		}
+	}
+
+	setupPlan(t, "apply", sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name       string
@@ -401,14 +506,14 @@ func TestApply(t *testing.T) {
 		})
 	}
 
-	cleanupPlan(t, "apply", sharedPath, awsAccessKey, awsSecretKey)
-	cleanupOutput(sharedPath)
+	cleanupPlan(t, "apply", relativeSharedPath, awsAccessKey, awsSecretKey)
+	cleanupOutput(relativeSharedPath)
 }
 
-func setupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag string) {
-	cleanupPlan(t, suffix, sharedPath, awsAccessKey, awsSecretKey)
+func setupPlan(t *testing.T, suffix, sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag string) {
+	cleanupPlan(t, suffix, relativeSharedPath, awsAccessKey, awsSecretKey)
 
-	if err := generateRsaKeyPair(sharedPath, "test_vms_rsa"); err != nil {
+	if err := generateRsaKeyPair(relativeSharedPath, "test_vms_rsa"); err != nil {
 		t.Fatalf("wasnt able to create rsa file: %s", err)
 	}
 
@@ -557,8 +662,8 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 
 	rgClient := resourcegroups.New(newSession)
 
-	rgName := moduleName + "-rg"
-	kpName := moduleName + "-kp"
+	rgName := "rg-" + moduleName
+	kpName := "kp-" + moduleName
 	logGroupName := moduleName + "-log-group"
 	nodeGroupName := moduleName + "-node-group0"
 	clusterName := moduleName
