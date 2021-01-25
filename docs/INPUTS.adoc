@@ -16,6 +16,28 @@ EKS cluster in
 
 |M_PRIVATE_ROUTE_TABLE_ID |string |unset |no |init |The id of private route table
 
+|M_DISK_SIZE |string |32 |yes |init |Node default disk size in gigabytes
+
+|M_AUTOSCALER_SCALE_DOWN_UTILIZATION_THRESHOLD |string |0.65 |yes |init | Autoscaler utilization threshold (cpu and memory)
+
+|M_EC2_SSH_KEY |string |null |no |init | EC2 SSH key that provides access for SSH communication with the nodes in the managed node group
+
+|M_AMI_TYPE |string |AL2_x86_64 |yes |init | The AMI type of the node group
+
+|M_WORKER_GROUPS |List of objects 
+|
+[source]
+----
+[{
+  name: default_wg,
+  instance_type: t2.small,
+  asg_desired_capacity: 1,
+  asg_min_size: 1,
+  asg_max_size: 1,
+}]
+----
+|yes |init | Default node specification
+
 |M_REGION |string |eu-central-1 |no |init |AWS Region where to deploy
 EKS cluster in
 |===

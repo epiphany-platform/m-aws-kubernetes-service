@@ -14,8 +14,8 @@ resource "aws_eks_node_group" "eks_nodes" {
 
   scaling_config {
     desired_size = var.worker_groups[count.index].asg_desired_capacity
-    max_size     = var.worker_groups[count.index].asg_min_size
-    min_size     = var.worker_groups[count.index].asg_max_size
+    max_size     = var.worker_groups[count.index].asg_max_size
+    min_size     = var.worker_groups[count.index].asg_min_size
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
