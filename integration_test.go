@@ -662,8 +662,8 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 
 	rgClient := resourcegroups.New(newSession)
 
-	rgName := "rg-" + moduleName
-	kpName := "kp-" + moduleName
+	rgName := moduleName + "-rg"
+	kpName := moduleName + "-kp"
 	logGroupName := moduleName + "-log-group"
 	nodeGroupName := moduleName + "-node-group0"
 	clusterName := moduleName
