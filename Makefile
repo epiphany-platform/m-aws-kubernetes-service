@@ -52,6 +52,9 @@ metadata: guard-VERSION guard-IMAGE guard-USER needs-docker
 		-t $(IMAGE_NAME) \
 		metadata
 
+print-%:
+	@echo "$($*)"
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
