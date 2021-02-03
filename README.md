@@ -8,7 +8,8 @@ AwsKS module is reponsible for providing managed Kubernetes service [(Amazon EKS
 
 ## Prepare AWS access key
 
-Have a look [here](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys).
+Have a
+look [here](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys).
 
 ## Build image
 
@@ -27,7 +28,11 @@ or directly using Docker:
 
 ## Run module
 
-The AwsKS cluster and new private subnets will be created in the vpc from the [AwsBI Module](https://github.com/epiphany-platform/m-aws-basic-infrastructure) or you can create the AwsKS cluster in an already existing subnets. Amazon EKS requires subnets in at least two Availability Zones. The existing VPC must meet specific [requirements](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html) for use with Amazon EKS.
+The AwsKS cluster and new private subnets will be created in the vpc from
+the [AwsBI Module](https://github.com/epiphany-platform/m-aws-basic-infrastructure) or you can create the AwsKS cluster
+in an already existing subnets. Amazon EKS requires subnets in at least two Availability Zones. The existing VPC must
+meet specific [requirements](https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html) for use with Amazon
+EKS.
 
 At this stage you should have already /tmp/shared directory with your ssh-keys and AwsBI module data.
 
@@ -37,8 +42,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init
   ```
 
-  This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file.
-  Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
+  This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate
+  what is stored in that file. Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
 
   Note: M_REGION and M_NAME have to be the same as in AwsBI module
 
@@ -48,7 +53,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest init M_REGION="region of existing VPC" M_VPC_ID="existiing vpc id" M_SUBNET_IDS="[existing_subnet1_id,existing_subnet2_id,...]"
   ```
 
-   This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate what is stored in that file. Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
+  This commad will create configuration file of AwsKS module in /tmp/shared/awsks/awsks-config.yml. You can investigate
+  what is stored in that file. Available parameters are listed in the [inputs](docs/INPUTS.adoc) document.
 
 * Plan and apply AwsKS module:
 
@@ -65,11 +71,13 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
   docker run --rm -v /tmp/shared:/shared -t epiphanyplatform/awsks:latest kubeconfig
   ```
 
-  This command will create file `/tmp/shared/kubeconfig`. You will need to move this file manually to `/tmp/shared/build/your-cluster-name/kubeconfig`.
+  This command will create file `/tmp/shared/kubeconfig`. You will need to move this file manually
+  to `/tmp/shared/build/your-cluster-name/kubeconfig`.
 
 ## Run module with provided example
 
-* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/basic_flow/vars.mk.sample):
+* Prepare your own variables in vars.mk file to use in the building process. Sample file (
+  examples/basic_flow/vars.mk.sample):
 
   ```shell
   AWS_ACCESS_KEY_ID = "access key id"
@@ -87,7 +95,8 @@ At this stage you should have already /tmp/shared directory with your ssh-keys a
 
 ## Run module with provided example in existing subnets
 
-* Prepare your own variables in vars.mk file to use in the building process. Sample file (examples/create_in_existing_subnets/vars.mk.sample):
+* Prepare your own variables in vars.mk file to use in the building process. Sample file (
+  examples/create_in_existing_subnets/vars.mk.sample):
 
   ```shell
   AWS_ACCESS_KEY = "access key id"
@@ -125,15 +134,40 @@ or if you want to set different version number:
   make release VERSION=number_of_your_choice
   ```
 
+## Integration tests execution
+
+Prior to run integration tests specify environment variables:
+
+### Required environment variables
+
+- AWS_ACCESS_KEY_ID - your access key
+- AWS_SECRET_ACCESS_KEY - your secret
+- AWSBI_IMAGE_TAG - full tag of docker image that you want to test e.g. "epiphanyplatform/awsbi:0.0.1"
+- AWSKS_IMAGE_TAG - full tag of docker image that you want to test e.g. "epiphanyplatform/awsks:0.0.1"
+
+### Optional environment variables
+
+- M_NAME_PREFIX - prefix to create AWS resources with
+- M_REGION - AWS region to create resources in
+
+and after that run shell command:
+
+```shell
+  make test
+```
+
 ## Notes
 
-* The cluster autoscaler major and minor versions must match your cluster.
-For example if you are running a 1.16 EKS cluster set version to v1.16.5.
-For more details check [documentation](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md#notes)
+* The cluster autoscaler major and minor versions must match your cluster. For example if you are running a 1.16 EKS
+  cluster set version to v1.16.5. For more details
+  check [documentation](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/autoscaling.md#notes)
 
 ## Windows users
 
-This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the examples the same way but then from then ```examples/basic_flow_devcontainer``` folder or ```examples/create_in_existing_subnets_devcontainer```.
+This module is designed for Linux/Unix development/usage only. If you need to develop from Windows you can use the
+included [devcontainer setup for VScode](https://code.visualstudio.com/docs/remote/containers-tutorial) and run the
+examples the same way but then from then ```examples/basic_flow_devcontainer``` folder
+or ```examples/create_in_existing_subnets_devcontainer```.
 
 ## Module dependencies
 
