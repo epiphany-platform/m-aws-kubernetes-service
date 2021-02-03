@@ -147,7 +147,7 @@ Prior to run integration tests specify environment variables:
 
 ### Optional environment variables
 
-- M_NAME_PREFIX - prefix to create AWS resources with
+- M_NAME - prefix to create AWS resources with
 - M_REGION - AWS region to create resources in
 
 and after that run shell command:
