@@ -319,8 +319,8 @@ func TestPlan(t *testing.T) {
 	k8sVolPath := os.Getenv("K8S_VOL_PATH")
 	sharedPath := setupOutput(t, "plan")
 	relativeSharedPath := sharedPath
-	region := getEnv(t, "M_REGION", defaultRegion)
-	moduleName := getEnv(t, "M_NAME", defaultModuleName)
+	region := getEnv("M_REGION", defaultRegion)
+	moduleName := getEnv("M_NAME", defaultModuleName)
 
 	if len(k8sHostPath) != 0 && len(k8sVolPath) != 0 {
 		sharedPath = path.Join(k8sHostPath, "awsks-plan")
@@ -403,8 +403,8 @@ func TestApply(t *testing.T) {
 	k8sVolPath := os.Getenv("K8S_VOL_PATH")
 	sharedPath := setupOutput(t, "apply")
 	relativeSharedPath := sharedPath
-	region := getEnv(t, "M_REGION", defaultRegion)
-	moduleName := getEnv(t, "M_NAME", defaultModuleName)
+	region := getEnv("M_REGION", defaultRegion)
+	moduleName := getEnv("M_NAME", defaultModuleName)
 
 	if len(k8sHostPath) != 0 && len(k8sVolPath) != 0 {
 		sharedPath = path.Join(k8sHostPath, "awsks-apply")
@@ -655,7 +655,7 @@ func getImageTags(t *testing.T) (awsbiImageTag, awsksImageTag string) {
 	return
 }
 
-func getEnv(t *testing.T, envName, defaultValue string) (envValue string) {
+func getEnv(envName, defaultValue string) (envValue string) {
 	envValue, exists := os.LookupEnv(envName)
 	if !exists {
 		envValue = defaultValue
