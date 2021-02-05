@@ -40,7 +40,7 @@ steps:
       targetType: 'inline'
       script: |
         echo "##vso[task.prependpath]/tools/go/1.15.2/x64/bin"
-      failOnStderr: true 
+      failOnStderr: true
   - task: Bash@3
     displayName: 'Set Build Variables'
     inputs:
@@ -75,6 +75,8 @@ steps:
       AWS_SECRET_KEY: $(AWS_SECRET_KEY)
       AWSKS_IMAGE_TAG: $(REPOSITORY_NAME)/$(IMAGE_NAME):$(MAJOR_VERSION)
       AWSBI_IMAGE_TAG: $(AWSBI_IMAGE_TAG)
+      M_NAME: $(M_NAME_PREFIX)-$(Build.BuildId)
+      M_REGION: $(M_REGION)
   - task: CmdLine@2
     displayName: 'Cleanup Local Image'
     inputs:

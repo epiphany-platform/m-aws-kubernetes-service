@@ -31,8 +31,9 @@ import (
 )
 
 const (
-	moduleName    = "eks-module"
-	retries       = 30
+	defaultModuleName = "eks-module"
+	defaultRegion     = "eu-central-1"
+	retries           = 30
 )
 
 func TestInit(t *testing.T) {
@@ -52,7 +53,7 @@ func TestInit(t *testing.T) {
 			initParams:    nil,
 			stateLocation: "state.yml",
 			stateContent:  ``,
-			wantOutput: `
+			wantOutput: fmt.Sprintf(`
 #AWSKS | setup | ensure required directories
 #AWSKS | ensure-state-file | checks if state file exists
 #AWSKS | template-config-file | will template config file (and backup previous if exists)
@@ -63,7 +64,7 @@ kind: awsks-config
 awsks:
   name: epiphany
   vpc_id: unset
-  region: eu-central-1
+  region: %s
   subnet_ids: null
   private_route_table_id: unset
   disk_size: 32
@@ -75,15 +76,15 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
-`,
+      asg_max_size: 1
+`, defaultRegion),
 			wantConfigLocation: "awsks/awsks-config.yml",
-			wantConfigContent: `
+			wantConfigContent: fmt.Sprintf(`
 kind: awsks-config
 awsks:
   name: epiphany
   vpc_id: unset
-  region: eu-central-1
+  region: %s
   subnet_ids: null
   private_route_table_id: unset
   disk_size: 32
@@ -95,8 +96,8 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
-`,
+      asg_max_size: 1
+`, defaultRegion),
 			wantStateContent: `
 kind: state
 awsks:
@@ -131,7 +132,7 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
+      asg_max_size: 1
 `,
 			wantConfigLocation: "awsks/awsks-config.yml",
 			wantConfigContent: `
@@ -151,7 +152,7 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
+      asg_max_size: 1
 `,
 			wantStateContent: `
 kind: state
@@ -163,13 +164,13 @@ awsks:
 			name:          "init with state",
 			initParams:    nil,
 			stateLocation: "state.yml",
-			stateContent: `
+			stateContent: fmt.Sprintf(`
 kind: state
 awsbi:
   status: applied
   name: epiphany
   instance_count: 0
-  region: eu-central-1
+  region: %s
   use_public_ip: false
   force_nat_gateway: true
   rsa_pub_path: "/shared/vms_rsa.pub"
@@ -178,8 +179,8 @@ awsbi:
     public_ip.value: []
     public_subnet_id.value: subnet-0137cf1e7921c1551
     vpc_id.value: vpc-0baa2c4e9e48e608c
-`,
-			wantOutput: `
+`, defaultRegion),
+			wantOutput: fmt.Sprintf(`
 #AWSKS | setup | ensure required directories
 #AWSKS | ensure-state-file | checks if state file exists
 #AWSKS | template-config-file | will template config file (and backup previous if exists)
@@ -190,7 +191,7 @@ kind: awsks-config
 awsks:
   name: epiphany
   vpc_id: vpc-0baa2c4e9e48e608c
-  region: eu-central-1
+  region: %s
   subnet_ids: null
   private_route_table_id: unset
   disk_size: 32
@@ -202,15 +203,15 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
-`,
+      asg_max_size: 1
+`, defaultRegion),
 			wantConfigLocation: "awsks/awsks-config.yml",
-			wantConfigContent: `
+			wantConfigContent: fmt.Sprintf(`
 kind: awsks-config
 awsks:
   name: epiphany
   vpc_id: vpc-0baa2c4e9e48e608c
-  region: eu-central-1
+  region: %s
   subnet_ids: null
   private_route_table_id: unset
   disk_size: 32
@@ -222,15 +223,15 @@ awsks:
       instance_type: t2.small
       asg_desired_capacity: 1
       asg_min_size: 1
-      asg_max_size: 1 
-`,
-			wantStateContent: `
+      asg_max_size: 1
+`, defaultRegion),
+			wantStateContent: fmt.Sprintf(`
 kind: state
 awsbi:
   status: applied
   name: epiphany
   instance_count: 0
-  region: eu-central-1
+  region: %s
   use_public_ip: false
   force_nat_gateway: true
   rsa_pub_path: "/shared/vms_rsa.pub"
@@ -241,20 +242,20 @@ awsbi:
     vpc_id.value: vpc-0baa2c4e9e48e608c
 awsks:
   status: initialized
-`,
+`, defaultRegion),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			k8sHostPath        := os.Getenv("K8S_HOST_PATH")
-			k8sVolPath         := os.Getenv("K8S_VOL_PATH")
-			sharedPath         := setupOutput(t, "init")
+			k8sHostPath := os.Getenv("K8S_HOST_PATH")
+			k8sVolPath := os.Getenv("K8S_VOL_PATH")
+			sharedPath := setupOutput(t, "init")
 			relativeSharedPath := sharedPath
 
-			if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
-				sharedPath         = path.Join(k8sHostPath, "awsks-init")
+			if len(k8sHostPath) != 0 && len(k8sVolPath) != 0 {
+				sharedPath = path.Join(k8sHostPath, "awsks-init")
 				relativeSharedPath = path.Join(k8sVolPath, "awsks-init")
 
 				err := os.MkdirAll(relativeSharedPath, os.ModePerm)
@@ -314,13 +315,15 @@ func TestPlan(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	awsbiImageTag, awsksImageTag := getImageTags(t)
 
-	k8sHostPath        := os.Getenv("K8S_HOST_PATH")
-	k8sVolPath         := os.Getenv("K8S_VOL_PATH")
-	sharedPath         := setupOutput(t, "plan")
+	k8sHostPath := os.Getenv("K8S_HOST_PATH")
+	k8sVolPath := os.Getenv("K8S_VOL_PATH")
+	sharedPath := setupOutput(t, "plan")
 	relativeSharedPath := sharedPath
+	region := getEnv("M_REGION", defaultRegion)
+	moduleName := getEnv("M_NAME", defaultModuleName)
 
-	if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
-		sharedPath         = path.Join(k8sHostPath, "awsks-plan")
+	if len(k8sHostPath) != 0 && len(k8sVolPath) != 0 {
+		sharedPath = path.Join(k8sHostPath, "awsks-plan")
 		relativeSharedPath = path.Join(k8sVolPath, "awsks-plan")
 
 		err := os.MkdirAll(relativeSharedPath, os.ModePerm)
@@ -329,7 +332,7 @@ func TestPlan(t *testing.T) {
 		}
 	}
 
-	setupPlan(t, "plan", sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
+	setupPlan(t, fmt.Sprintf("%s-plan", moduleName), region, sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name                   string
@@ -339,7 +342,7 @@ func TestPlan(t *testing.T) {
 	}{
 		{
 			name:                   "plan",
-			initParams:             []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "plan")},
+			initParams:             []string{fmt.Sprintf("M_NAME=%s-plan", moduleName), fmt.Sprintf("M_REGION=%s", region)},
 			wantPlanOutputLastLine: `Plan: 29 to add, 0 to change, 0 to destroy.`,
 			wantTfPlanLocation:     "awsks/terraform-apply.tfplan",
 		},
@@ -386,7 +389,7 @@ func TestPlan(t *testing.T) {
 		})
 	}
 
-	cleanupPlan(t, "plan", relativeSharedPath, awsAccessKey, awsSecretKey)
+	cleanupPlan(t, fmt.Sprintf("%s-plan", moduleName), region, relativeSharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(relativeSharedPath)
 }
 
@@ -396,13 +399,15 @@ func TestApply(t *testing.T) {
 	awsAccessKey, awsSecretKey := getAwsCreds(t)
 	awsbiImageTag, awsksImageTag := getImageTags(t)
 
-	k8sHostPath        := os.Getenv("K8S_HOST_PATH")
-	k8sVolPath         := os.Getenv("K8S_VOL_PATH")
-	sharedPath         := setupOutput(t, "apply")
+	k8sHostPath := os.Getenv("K8S_HOST_PATH")
+	k8sVolPath := os.Getenv("K8S_VOL_PATH")
+	sharedPath := setupOutput(t, "apply")
 	relativeSharedPath := sharedPath
+	region := getEnv("M_REGION", defaultRegion)
+	moduleName := getEnv("M_NAME", defaultModuleName)
 
-	if ( len(k8sHostPath) != 0 && len(k8sVolPath) != 0) {
-		sharedPath         = path.Join(k8sHostPath, "awsks-apply")
+	if len(k8sHostPath) != 0 && len(k8sVolPath) != 0 {
+		sharedPath = path.Join(k8sHostPath, "awsks-apply")
 		relativeSharedPath = path.Join(k8sVolPath, "awsks-apply")
 
 		err := os.MkdirAll(relativeSharedPath, os.ModePerm)
@@ -411,7 +416,7 @@ func TestApply(t *testing.T) {
 		}
 	}
 
-	setupPlan(t, "apply", sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
+	setupPlan(t, fmt.Sprintf("%s-apply", moduleName), region, sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag)
 
 	tests := []struct {
 		name       string
@@ -419,7 +424,7 @@ func TestApply(t *testing.T) {
 	}{
 		{
 			name:       "apply",
-			initParams: []string{fmt.Sprintf("M_NAME=%s-%s", moduleName, "apply")},
+			initParams: []string{fmt.Sprintf("M_NAME=%s-apply", moduleName), fmt.Sprintf("M_REGION=%s", region)},
 		},
 	}
 
@@ -506,12 +511,12 @@ func TestApply(t *testing.T) {
 		})
 	}
 
-	cleanupPlan(t, "apply", relativeSharedPath, awsAccessKey, awsSecretKey)
+	cleanupPlan(t, fmt.Sprintf("%s-apply", moduleName), region, relativeSharedPath, awsAccessKey, awsSecretKey)
 	cleanupOutput(relativeSharedPath)
 }
 
-func setupPlan(t *testing.T, suffix, sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag string) {
-	cleanupPlan(t, suffix, relativeSharedPath, awsAccessKey, awsSecretKey)
+func setupPlan(t *testing.T, moduleName, region, sharedPath, relativeSharedPath, awsAccessKey, awsSecretKey, awsbiImageTag, awsksImageTag string) {
+	cleanupPlan(t, moduleName, region, relativeSharedPath, awsAccessKey, awsSecretKey)
 
 	if err := generateRsaKeyPair(relativeSharedPath, "test_vms_rsa"); err != nil {
 		t.Fatalf("wasnt able to create rsa file: %s", err)
@@ -521,7 +526,8 @@ func setupPlan(t *testing.T, suffix, sharedPath, relativeSharedPath, awsAccessKe
 		"init",
 		"M_VMS_COUNT=0",
 		"M_PUBLIC_IPS=false",
-		fmt.Sprintf("M_NAME=%s-%s", moduleName, suffix),
+		fmt.Sprintf("M_NAME=%s", moduleName),
+		fmt.Sprintf("M_REGION=%s", region),
 		"M_VMS_RSA=test_vms_rsa",
 	}
 
@@ -560,8 +566,8 @@ func setupPlan(t *testing.T, suffix, sharedPath, relativeSharedPath, awsAccessKe
 	docker.Run(t, awsbiImageTag, applyOpts)
 }
 
-func cleanupPlan(t *testing.T, suffix, sharedPath, awsAccessKey, awsSecretKey string) {
-	cleanupAWSResources(t, "eu-central-1", fmt.Sprintf("%s-%s", moduleName, suffix), awsAccessKey, awsSecretKey)
+func cleanupPlan(t *testing.T, moduleName, region, sharedPath, awsAccessKey, awsSecretKey string) {
+	cleanupAWSResources(t, region, moduleName, awsAccessKey, awsSecretKey)
 }
 
 func setupOutput(t *testing.T, suffix string) string {
@@ -646,6 +652,14 @@ func getImageTags(t *testing.T) (awsbiImageTag, awsksImageTag string) {
 		t.Fatalf("expected non-empty AWSKS_IMAGE_TAG environment variable")
 	}
 
+	return
+}
+
+func getEnv(envName, defaultValue string) (envValue string) {
+	envValue, exists := os.LookupEnv(envName)
+	if !exists {
+		envValue = defaultValue
+	}
 	return
 }
 

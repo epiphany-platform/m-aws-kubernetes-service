@@ -125,6 +125,28 @@ or if you want to set different version number:
   make release VERSION=number_of_your_choice
   ```
 
+## Integration tests execution
+
+Prior to integration tests execution specify environment variables:
+
+### Required environment variables
+
+- AWS_ACCESS_KEY_ID - your access key
+- AWS_SECRET_ACCESS_KEY - your secret
+- AWSBI_IMAGE_TAG - full tag of docker image that you want to test e.g. "epiphanyplatform/awsbi:0.0.1"
+- AWSKS_IMAGE_TAG - full tag of docker image that you want to test e.g. "epiphanyplatform/awsks:0.0.1"
+
+### Optional environment variables
+
+- M_NAME - prefix to create AWS resources with
+- M_REGION - AWS region to create resources in
+
+and after that run shell command:
+
+```shell
+  make test
+```
+
 ## Notes
 
 * The cluster autoscaler major and minor versions must match your cluster.
