@@ -31,6 +31,7 @@ import (
 )
 
 const (
+	awsTagName        = "resource_group"
 	defaultModuleName = "eks-module"
 	defaultRegion     = "eu-central-1"
 	retries           = 30
@@ -677,7 +678,6 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 	rgClient := resourcegroups.New(newSession)
 
 	rgName := moduleName + "-rg"
-	kpName := moduleName + "-kp"
 	logGroupName := moduleName + "-log-group"
 	nodeGroupName := moduleName + "-node-group0"
 	clusterName := moduleName
@@ -750,7 +750,7 @@ func cleanupAWSResources(t *testing.T, awsRegion, moduleName, awsAccessKey, awsS
 	removeRoles(t, newSession, iamRolesToRemove)
 	removeLogGroup(t, newSession, logGroupName)
 	removeResourceGroup(t, newSession, rgName)
-	removeKeyPair(t, newSession, kpName)
+	removeKeyPair(t, newSession, awsTagName, moduleName)
 }
 
 func removeEc2s(t *testing.T, session *session.Session, ec2sToRemove []*resourcegroups.ResourceIdentifier) {
@@ -1059,11 +1059,34 @@ func removeVpc(t *testing.T, session *session.Session, vpcsToRemove []*resourceg
 	}
 }
 
-func removeKeyPair(t *testing.T, session *session.Session, kpName string) {
+func removeKeyPair(t *testing.T, session *session.Session, filterTagName, filterTagValue string) {
 	ec2Client := ec2.New(session)
 
+	keyPairDescInp := &ec2.DescribeKeyPairsInput{
+		Filters: []*ec2.Filter{
+			{
+				Name: aws.String("tag:" + filterTagName),
+				Values: []*string{
+					aws.String(filterTagValue),
+				},
+			},
+		},
+	}
+
+	describe, err := ec2Client.DescribeKeyPairs(keyPairDescInp)
+	if err != nil {
+		t.Fatal("Key Pair: Cannot get Key Pair list.", err)
+	}
+
+	// Do not remove key pairs if there are several ones with the same tag
+	// Resources created by pipeline tests have unique tag values
+	if len(describe.KeyPairs) != 1 {
+		t.Logf("There are several key pairs with the tag %s:%s that will not be removed", filterTagName, filterTagValue)
+		return
+	}
+
 	removeKeyInp := &ec2.DeleteKeyPairInput{
-		KeyName: &kpName,
+		KeyName: describe.KeyPairs[0].KeyName,
 	}
 
 	output, err := ec2Client.DeleteKeyPair(removeKeyInp)
