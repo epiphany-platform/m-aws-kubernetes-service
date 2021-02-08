@@ -1078,9 +1078,14 @@ func removeKeyPair(t *testing.T, session *session.Session, filterTagName, filter
 		t.Fatal("Key Pair: Cannot get Key Pair list.", err)
 	}
 
+    if len(describe.KeyPairs) == 0 {
+		t.Logf("There is no  key pairs with the tag %s:%s", filterTagName, filterTagValue)
+		return
+	}
+
 	// Do not remove key pairs if there are several ones with the same tag
 	// Resources created by pipeline tests have unique tag values
-	if len(describe.KeyPairs) != 1 {
+	if len(describe.KeyPairs) > 1 {
 		t.Logf("There are several key pairs with the tag %s:%s that will not be removed", filterTagName, filterTagValue)
 		return
 	}
